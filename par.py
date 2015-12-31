@@ -21,7 +21,7 @@ for i in range(12):
     #if flag == 1:
     data+=result
     f.close()
-final = = [dict(t) for t in set([tuple(d.items()) for d in data])]
+final =  [dict(t) for t in set([tuple(d.items()) for d in data])]
 
 """ 
 response = urllib2.urlopen('http://210.69.35.216/data/api/pbs')
