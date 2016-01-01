@@ -23,6 +23,14 @@ for i in range(12):
     f.close()
 final =  [dict(t) for t in set([tuple(d.items()) for d in data])]
 
+coordinate = []
+for i in range(len(final)):
+    try:
+        coordinate.append([float(final[i]['x1']),float(final[i]['y1'])])
+    except ValueError: #could not convert string to float
+        print i
+        coordinate.append
+
 """ 
 response = urllib2.urlopen('http://210.69.35.216/data/api/pbs')
 html = response.read()
