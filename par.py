@@ -5,9 +5,7 @@ import time
 
 def parse_json():
     data = []
-    for i in range(14):
-        if i ==0:
-            continue
+    for i in range(1, 15):
         #flag = 1
         f = open('result'+str(i)+'.json')
         text = f.read()

@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import math
+import datetime
 ###########################################################
 ## Google map python wrapper V0.1
 ## 
@@ -129,13 +130,17 @@ class maps:
 
 
 	def drawpoint(self,f,pt,color, idx):		
+		try:
+			happen = datetime.datetime.strptime(pt['happendate']+'T'+pt['happentime'][0:8],'%Y-%m-%dT%H:%M:%S')		
+		except:
+			happen = pt['happendate'].encode('utf-8') + pt['happentime'].encode('utf-8')
 		comment = ','.join(pt['comment'].encode('utf-8').split('\n'))                
 		comment = ''.join(comment.split('"'))
 		src = ','.join(pt['srcdetail'].encode('utf-8').split('\n'))
 		f.write('\t\tvar latlng_%d = {lat: %f, lng: %f};\n'%(idx, float(pt['y1']),float(pt['x1'])))
 		f.write('\t\tvar img = new google.maps.MarkerImage(\'%s\');\n' % (self.coloricon.replace('XXXXXX',color)))
 		f.write('\t\tvar contentString_%d = "<h1>%s</h1>"+\n' %(idx, pt['roadtype'].encode('utf-8')))
-		f.write('\t\t\t"<p>發生時間: <b>%s, %s</b></p>"+\n' %(pt['happendate'].encode('utf-8'), pt['happentime'].encode('utf-8')))
+		f.write('\t\t\t"<p>發生時間: <b>%s</b></p>"+\n' %(happen))
 		f.write('\t\t\t"<p>詳細內容:%s</p>"+\n' %(comment.strip()))
 		f.write('\t\t\t"<p>資料來源:%s</p>";\n' %(src))
 		f.write('\t\tvar infowindow_%d = new google.maps.InfoWindow({\n'%(idx))
