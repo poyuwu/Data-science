@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import math
 ###########################################################
 ## Google map python wrapper V0.1
@@ -19,8 +20,8 @@ class maps:
 	def setgrids(self,slat,elat,latin,slng,elng,lngin):
 		self.gridsetting = [slat,elat,latin,slng,elng,lngin]
 
-	def addpoint(self, lat, lng, color = '#FF0000', comment = ''):
-		self.points.append((lat,lng,color[1:], comment))
+	def addpoint(self, point, color = '#FF0000'):
+		self.points.append((point,color[1:]))
 
 	#def addpointcoord(self, coord):
 	#	self.points.append((coord[0],coord[1]))
@@ -79,8 +80,10 @@ class maps:
 		for line in self.grids:
 			self.drawPolyline(f,line,strokeColor = "#000000")
 	def drawpoints(self,f):
-		for point in  self.points:
-			self.drawpoint(f,point[0],point[1],point[2], point[3])
+                idx = 0
+		for point in self.points:
+			idx += 1
+			self.drawpoint(f,point[0],point[1], idx)
 
 	def drawradpoints(self, f):
 		for rpoint in self.radpoints:
@@ -125,15 +128,28 @@ class maps:
 
 
 
-	def drawpoint(self,f,lat,lon,color, comment):
-		f.write('\t\tvar latlng = new google.maps.LatLng(%f, %f);\n'%(lat,lon))
+	def drawpoint(self,f,pt,color, idx):		
+		comment = ','.join(pt['comment'].encode('utf-8').split('\n'))                
+		comment = ''.join(comment.split('"'))
+		src = ','.join(pt['srcdetail'].encode('utf-8').split('\n'))
+		f.write('\t\tvar latlng_%d = {lat: %f, lng: %f};\n'%(idx, float(pt['y1']),float(pt['x1'])))
 		f.write('\t\tvar img = new google.maps.MarkerImage(\'%s\');\n' % (self.coloricon.replace('XXXXXX',color)))
-		f.write('\t\tvar marker = new google.maps.Marker({\n')
-		f.write('\t\ttitle: "'+ comment.encode('utf-8') + '",\n')
+		f.write('\t\tvar contentString_%d = "<h1>%s</h1>"+\n' %(idx, pt['roadtype'].encode('utf-8')))
+		f.write('\t\t\t"<p>發生時間: <b>%s, %s</b></p>"+\n' %(pt['happendate'].encode('utf-8'), pt['happentime'].encode('utf-8')))
+		f.write('\t\t\t"<p>詳細內容:%s</p>"+\n' %(comment.strip()))
+		f.write('\t\t\t"<p>資料來源:%s</p>";\n' %(src))
+		f.write('\t\tvar infowindow_%d = new google.maps.InfoWindow({\n'%(idx))
+		f.write('\t\t\tcontent: contentString_%d\n'%(idx))
+		f.write('\t\t});\n')              
+		f.write('\t\tvar marker_%d = new google.maps.Marker({\n'%(idx))
+		f.write('\t\ttitle: "經度:%s, 緯度:%s",\n' %(pt['x1'].encode('utf-8'), pt['y1'].encode('utf-8') ))
 		f.write('\t\ticon: img,\n')
-		f.write('\t\tposition: latlng\n')
+		f.write('\t\tposition: latlng_%d\n'%(idx))
 		f.write('\t\t});\n')
-		f.write('\t\tmarker.setMap(map);\n')
+		f.write('\t\tmarker_%d.addListener("click", function() {\n'%(idx))
+		f.write('\t\t\tinfowindow_%d.open(map, marker_%d);\n'%(idx, idx))
+		f.write('\t\t});\n')
+		f.write('\t\tmarker_%d.setMap(map);\n'%(idx))
 		f.write('\n')
 		
 	def drawPolyline(self,f,path,\
