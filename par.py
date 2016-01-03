@@ -5,9 +5,7 @@ import time
 
 def parse_json():
     data = []
-    for i in range(12):
-        if i ==0:
-            continue
+    for i in range(1, 15):
         #flag = 1
         f = open('result'+str(i)+'.json')
         text = f.read()
@@ -26,13 +24,6 @@ def parse_json():
     final =  [dict(t) for t in set([tuple(d.items()) for d in data])]
     return final
 
-coordinate = []
-for i in range(len(final)):
-    try:
-        coordinate.append([float(final[i]['x1']),float(final[i]['y1'])])
-    except ValueError: #could not convert string to float
-        print i
-        coordinate.append
 
 """ 
 response = urllib2.urlopen('http://210.69.35.216/data/api/pbs')
